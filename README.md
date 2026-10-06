@@ -20,6 +20,29 @@ This repository is a simplified, **fully open-source** version of a larger ArcGI
 dataset is read straight from its public ArcGIS REST API for the study-area extent only, so the repository stays
 small.
 
+## Project status and planned analysis
+
+This repository currently holds the first notebook, **`NB00_EDA.ipynb`**, an exploratory data analysis (EDA) of every
+dataset: description and access, spatial and temporal coverage, integration and overlap, descriptive statistics,
+outliers, and a first look at how crack density relates to flood frequency, elevation and traffic.
+
+**Planned notebooks** will use that relationship to explore how road cracking could change as sea level rises,
+following the approach of the original `NB05` projection notebook:
+
+1. **Study cells.** The analysis is limited to road-only 5 m cells: sidewalk/driveway cells and road cells without a
+   traffic (AADT) count are excluded.
+2. **Scenario.** Cells are projected for 2030, 2040, 2050, 2060, 2070, 2080, 2090 and 2100 under the NOAA 2017
+   Intermediate-High relative sea-level-rise scenario (USACE, 2022). As a simple thought experiment, no road
+   maintenance is assumed and traffic and all other cell attributes are held constant.
+3. **Flood exposure.** As was done for 2025, a flood-days-per-year raster is computed for each decade from the DEM, the
+   VDatum surface and the projected sea level (Ezer, 2022).
+4. **Cracking.** The modeled contribution of flood frequency to crack density is applied to each cell's projected flood
+   days, giving the expected increase in crack density per cell and decade.
+5. **Outputs.** The projected flood-days rasters for all decades are stored in one output folder, and the projected
+   crack-density values are stored on the 5 m cell polygons in another, so they can be mapped as choropleths for each
+   decade.
+
+These later notebooks are not part of this repository yet.
 ## Repository structure
 
 ```
