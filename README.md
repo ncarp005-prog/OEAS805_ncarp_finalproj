@@ -60,7 +60,7 @@ Full descriptions, how each custom file was made, and the references are in the 
 
 ## How to run
 
-1. Create the environment: `conda env create -f oes805_proj.yml`, then `conda activate oes805_proj`.
+1. Download the environment file `oes805_proj.yml` to your project folder, then activate your environment `conda activate oes805_proj`.
    The notebook's first cell pip-installs `lerc` (Esri's LERC decoder for the image-service tiles) if it is missing.
 2. Open `CODE/NB00_EDA_v4.ipynb`, set `PROJECT_ROOT` in **00.0 (Step B)** (or `None` to auto-detect), and run all cells.
 3. The first run downloads the study-area data (cached in `CODE/scratch_temp/NB00/api_cache`) and aggregates the
