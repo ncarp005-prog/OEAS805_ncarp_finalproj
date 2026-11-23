@@ -1,0 +1,568 @@
+ ~ ~ ~ Conversation with Gemini Notebook (Google Gemini 3.5) ~ ~ ~ 
+
+====================================================================================================
+USER MESSAGE 1  
+====================================================================================================
+I am writing a final project report primarily on the data analysis/ code in the source 00\_NB01\_FinalProj\_code.pdf. Previous work I've done for this research is provided in the source Carpenter\_VASG\_2026\_October15\_fixed.pptx.
+
+This final project is centered around a real-world research problem and is meant to be focused on data analysis, visualization, and developing and evaluating machine learning models (in our case, machine learning models also include regressions).
+
+As a starting point, create an outline of the final project report (organized in Introduction, Methods, Results, Discussion &amp; Conclusion sections), that includes which figures in 00\_NB01\_FinalProj\_code.pdf should be included and where. They do not necessarily need to be in order of occurrence and you can decide if a supplementary figure should be a main report figure, but generally the non-supplementary figures are what I decided to include originally and their numbers are the expected order. Make sure this outline makes sense in terms of narrative flow of ideas. This project report should be around 5-7 pages long (INCLUDING figures, but not including references/ bibliography).
+
+Here are some additional requirements:
+
+* Data Provenance: Make it clear which datasets are sourced from and where.
+* Research Focus: Clear central question(s)
+* Core Findings: answer to research question(s)
+Here is a comprehensive, structured report outline for your **OEAS 805 Final Project Report** on coastal road pavement cracking, flood modeling, and sea-level rise. This outline integrates the analytical workflows from `00_NB01_FinalProj_code.pdf` and the research context from `Carpenter_VASG_2026_October15_fixed.pptx`, maintaining a rigorous narrative flow designed for a **5–7 page report** (inclusive of embedded figures).
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 1  
+====================================================================================================
+---
+
+# Final Project Report Outline: Tidal Flooding, Pavement Cracking, & Sea-Level Rise
+
+## **Executive Summary of Narrative Architecture**
+* **Target Length:** 5–7 pages (including main text, embedded figures, and tables; excluding bibliography).
+* **Core Research Problem:** Chronic high-tide ("sunny-day") flooding is accelerating due to relative sea-level rise (RSLR). Infiltrating tidal water saturates and softens road base materials, rendering asphalt pavement vulnerable to fatigue cracking under vehicle loads.
+* **Central Research Questions (\\(RQ\\)) & Hypotheses (\\(H\\)):**
+  * **\\(RQ_1\\) (Observed Association):** Does chronic tidal flood frequency contribute significantly to increased pavement crack density after controlling for traffic volume and surface classification?
+    * **\\(H_1\\) (Modeled Flooding):** Pavement cells with higher modeled annual flood frequency display higher crack density, independent of traffic.
+    * **\\(H_2\\) (Observed Flooding):** Pavement within observed King Tide flood extents exhibits elevated crack density.
+  * **\\(RQ_2\\) (Future Projections):** How will projected sea-level rise (2040–2080) and escalating flood frequency impact road cracking across the municipal street network?
+* **Key Findings:** Flood frequency is a statistically significant predictor of pavement cracking (\\(p < 0.001\\)). In a fractional logistic regression controlling for traffic, **each doubling of annual flood days increases the odds of pavement cracking by 16.6% (OR = 1.166)**. Under the NOAA (2017) Intermediate-High scenario, mean crack density is projected to rise from **8.4% in 2025 to 12.4% in 2040, 18.2% in 2060, and 20.1% in 2080**.
+
+---
+
+## **Section 1: Introduction (~1.0–1.25 Pages)**
+
+### **1.1 Background & Physical Mechanism**
+* **The Coastal Infrastructure Challenge:** Relative sea level at the Sewells Point tide gauge in Norfolk, VA (NOAA Station 8638610) has risen at **\\(4.83 \pm 0.21\\) mm/yr** over 1927–2025. Accelerated RSLR increases the frequency of non-storm, high-tide inundation ("nuisance" or "sunny-day" flooding).
+* **Structural Pavement Degradation:** Ingress of saline tidal water weakens subgrade and unbound aggregate base layers. Repeated dynamic traffic stresses on compromised subgrades accelerate surface fatigue cracking.
+* **Research Focus & Questions:** Introduce \\(RQ_1\\), \\(RQ_2\\), and hypotheses \\(H_1\\) and \\(H_2\\).
+
+### **1.2 Study Area Context**
+* Geographic focus on **The Hague**, a tidal inlet of the Elizabeth River in Ghent, Norfolk, VA.
+* Low-lying coastal roadway network (~0.5–1.0 m above Mean Higher High Water, MHHW) subjected to recurrent tidal submergence.
+
+### **1.3 Figures to Include in Section 1**
+1. **Figure 1 (Main Report — `Fig01`):** *Study Area & Regional Setting*.
+   * **Panels:** Top: 2 cm drone orthomosaic with flight footprint around The Hague corridor. Bottom-Left: Regional locator map showing Norfolk and the Sewells Point tide gauge. Bottom-Right: Zoomed orthomosaic view of the Botetourt St & Mowbray Arch intersection.
+   * **Placement:** Embedded on Page 1 to ground geographic scale and study boundaries.
+2. **Figure 2 (Main Report — `Fig02`):** *Relative Sea-Level Record & Projections at Sewells Point*.
+   * **Content:** Monthly mean sea level (1927–2025) showing historical linear trend alongside NOAA (2017) decadal RSLR scenarios to 2100.
+   * **Placement:** Page 2, establishing baseline climate forcing for the flood model.
+
+---
+
+## **Section 2: Materials and Methods (~1.5–2.0 Pages)**
+
+### **2.1 Comprehensive Data Provenance**
+Explicitly detail primary field acquisitions and external GIS/API data sources:
+* **Primary High-Resolution Drone Datasets (Old Dominion University):**
+  * *RGB Orthomosaic (`Imagery_dry`):* 0.02 m (2 cm) spatial resolution flown at low tide on Oct 3, 2025 (DJI Mavic 3 Multispectral).
+  * *Digital Elevation Model (`Drone DEM`):* 0.5 m resolution, NAVD88 vertical datum, derived from LiDAR flown Oct 3, 2025 (DJI Matrice 300 / Rock R3 Pro V2).
+  * *Observed King Tide Extent:* 3 cm multispectral flood extent from Oct 10, 2025 high tide flight, classified via Support Vector Machine (SVM; 95% accuracy, \\(\kappa = 0.88\\)).
+* **External GIS Services & Datasets:**
+  * *NOAA VDatum:* Living Atlas Image Service converting NAVD88 elevations to MHHW tidal datum (~40×50 m grid).
+  * *NOAA CO-OPS APIs:* Station 8638610 monthly water levels and NOAA (2017) Intermediate-High RSLR scenario table (USACE Sea-Level Calculator).
+  * *VGIN & VDOT:* Virginia Road Centerlines + VDOT Annual Average Daily Traffic (AADT; 2024 release).
+  * *City of Norfolk GIS & Custom Vectors:* Sidewalk/driveway polygons digitized from 2025 imagery (`Custom_Sidewalk_2025Hague`) and Norfolk GIS open data.
+  * *Hydro-Corrected Water Mask (`WaterSurface_Final`):* Composite of 1 m Hydro-corrected DEM (HCDEM) and Segment Anything Model 3 (SAM 3) water segmentations.
+
+### **2.2 Deep Learning Crack Detection & Accuracy Assessment**
+* **Model Application:** Esri Pavement Crack Detection pretrained deep learning package (ArcGIS Living Atlas) applied to 2 cm imagery.
+* **Masking:** Applied 2 cm binary pavement mask (`Road_Mask_Final_Shrunk3`) to isolate road and sidewalk surfaces.
+* **Validation:** Evaluated against 150 stratified manual ground-truth points.
+  * *Metrics:* **Overall Accuracy = 92.0%**, **Cohen’s \\(\kappa = 0.840\\)**, **Precision = 0.933**, **Recall = 0.602**.
+
+### **2.3 Elevation & Flood Frequency Modeling**
+* Resampled DEM and VDatum onto a snapped 0.5 m raster grid.
+* Calculated elevation above MHHW (\\(Z_{MHHW} = Z_{NAVD88} - MHHW_{NAVD88}\\)).
+* Applied Ezer (2022) empirical tide-gauge equation to calculate annual flood days (\\(F\\)):
+  \\[\text{Log-odds factor } A = 2.0 - 2.4 \times (Z_{MHHW} - \text{RSLR})\\]
+* Generated flood frequency rasters for 2025 (\\(\text{RSLR} = 0.26\text{ m}\\)) and projection years 2040 (\\(0.49\text{ m}\\)), 2060 (\\(0.90\text{ m}\\)), 2080 (\\(1.42\text{ m}\\)), and 2100 (\\(2.04\text{ m}\\)) under Intermediate-High RSLR.
+
+### **2.4 Spatial Analysis Grid & Variable Aggregation**
+* Created \\(5\text{ m} \times 5\text{ m}\\) fishnet cells (\\(n = 1,129\\) cells; \\(12,293\text{ m}^2\\) pavement).
+* Aggregated variables per cell:
+  * **Response (\\(y\\)):** Crack Density (fraction of cell pavement classified as cracked).
+  * **Predictor (\\(x\\)):** Geometric mean \\(\log_{10}(\text{Flood Days/yr})\\).
+  * **Control (\\(c\\)):** Traffic Volume / Surface Class (AADT 260, 1,200, 4,500, Sidewalk/driveway, Uncounted road).
+  * **Weight (\\(w\\)):** Cell pavement surface area (\\(\text{m}^2\\)).
+
+### **2.5 Statistical & Machine Learning Framework**
+* **Model Specification:** **Fractional Logistic Regression** (GLM, Binomial family, Logit link) with quasi-likelihood estimation:
+  \\[\hat{y}_i = \frac{1}{1 + \exp[-(\beta_0 + \beta_1 \log_{10} F_i + \gamma_{c(i)})]}\\]
+* **Spatial Autocorrelation Handling:** Adjusted standard errors using **Conley Spatial HAC** estimator with a 90 m distance cutoff.
+* **Model Benchmarking & Validation:** Compared Fractional Logit against OLS, Beta Regression, Quadratic Fractional Logit, and Random Forest using 5-fold Spatial Block Cross-Validation (\\(R^2\\), RMSE, MAE).
+* **Climate Projection ("Delta-Change" Method):** Projected future cracking by adding model-implied changes to observed baseline values:
+  \\[\text{Projected Crack Density}_{it} = \text{Observed}_{i,2025} + [\hat{\mu}_{it} - \hat{\mu}_{i,2025}]\\]
+
+### **2.6 Figures & Tables to Include in Section 2**
+1. **Figure 3 (Main Report — `Fig03`):** *Deep-Learning Crack Detection Workflow & Map*.
+   * **Content:** DL workflow steps at the Botetourt/Mowbray intersection and study-wide classified crack distribution.
+2. **Figure 4 (Main Report — `Fig04`):** *Spatial Analysis Grid & Traffic Classes*.
+   * **Content:** \\(5\text{ m}\\) fishnet cells categorized by VDOT AADT traffic volume and sidewalk/driveway surface type.
+3. **Figure 5 (Main Report — `Fig05`):** *Modeled Annual Flood Days (2025–2080)*.
+   * **Content:** \\(2 \times 2\\) panel map showing cell-level flood day progression across 2025, 2040, 2060, and 2080.
+4. **Figure 6 (Main Report — `FigS04` brought into Main):** *Crack Detection Accuracy Assessment*.
+   * **Content:** Confusion matrix and performance metrics derived from 150 ground-truth validation points.
+5. **Figure 7 (Main Report — `Fig07`):** *Primary Fractional Logistic Regression Model Fit*.
+   * **Content:** Scatter plot of cell crack density vs. \\(\log_{10}(\text{flood days})\\), class-specific fitted curves, overall average curve with 95% confidence band, binned decile means, and full regression equation.
+
+---
+
+## **Section 3: Results (~1.5–2.0 Pages)**
+
+### **3.1 Exploratory Analysis & Bivariate Relationships**
+* Cell crack density is bounded, zero-inflated (\\(18.7\%\\) zeros), and right-skewed (median \\(0.026\\), mean \\(0.084\\)).
+* Flood frequency is highly right-skewed; \\(\log_{10}(\text{flood days})\\) normalizes the distribution.
+* Bivariate rank correlations (\\(\text{Spearman } \rho\\)):
+  * Crack Density vs. \\(\log_{10}(\text{Flood Days})\\): **\\(\rho = 0.296\\) (\\(p < 0.001\\))**.
+  * Crack Density vs. AADT Traffic: **\\(\rho = 0.594\\) (\\(p < 0.001\\))**.
+  * Flood Days vs. AADT overlap: \\(\rho = 0.28\\), requiring multivariate modeling to isolate flood impacts.
+
+### **3.2 Model Estimation & Hypotheses Testing**
+* **Primary Fractional Logit Model Parameters:**
+  * Flood coefficient \\(\beta_1 = 0.5100\\) (\\(SE_{\text{spatial HAC}} = 0.1219, z = 4.185, p < 0.001\\)).
+  * **Odds Ratio per doubling of flood days = \\(1.166\\) (95% CI: \\(1.085–1.253\\))**.
+  * **Average Marginal Effect (AME) = \\(+1.22\\) percentage points** per doubling of flood days.
+  * Holding road type constant, increasing flood days from 1 to 10 days/yr increases expected crack density from **7.6% to 11.7%**.
+* **Hypothesis Verdicts:**
+  * **\\(H_1\\) Confirmed:** Modeled flood frequency significantly increases crack density after controlling for traffic.
+  * **\\(H_2\\) Confirmed:** Observed King Tide inundation correlates with elevated crack density (\\(\rho = 0.40\\)).
+
+### **3.3 Model Comparison & Spatial Diagnostics**
+* Unadjusted crack density exhibits strong spatial autocorrelation (**Moran’s \\(I = 0.545\\)**).
+* Model residuals retain mild autocorrelation (Moran's \\(I = 0.361\\)).
+* **Cross-Validation Performance:**
+  * Fractional Logit achieved **In-Sample \\(R^2 = 0.398\\)** and **Spatial Block CV \\(R^2 = 0.334\\)** (\\(RMSE = 0.1025\\)).
+  * Adding flood days gained \\(+0.038\\) in CV \\(R^2\\) over a traffic-only baseline.
+  * Complex ML (Random Forest) overfit spatial noise, yielding poor generalization (**Spatial CV \\(R^2 = 0.171\\)**).
+
+### **3.4 Sea-Level Rise Projections (2040–2080)**
+* **Decadal Escalation in Pavement Crack Density:**
+  * **2025 (Observed Baseline):** Mean crack density = **\\(0.084\\) (8.4%)**; median flood days = \\(2.4\text{ days/yr}\\).
+  * **2040 (\\(\text{RSLR } 0.49\text{ m}\\)):** Median flood days = \\(17\text{ days/yr}\\); Mean crack density = **\\(0.124\\) (12.4%, +46.9% relative increase)**.
+  * **2060 (\\(\text{RSLR } 0.90\text{ m}\\)):** Median flood days = \\(354\text{ days/yr}\\); Mean crack density = **\\(0.182\\) (18.2%, +116.1%)**.
+  * **2080 (\\(\text{RSLR } 1.42\text{ m}\\)):** Median flood days = \\(365\text{ days/yr}\\) (capped); Mean crack density = **\\(0.201\\) (20.1%, +139.2%)**.
+* **Traffic Class Disparities:** High-traffic roads (AADT 4,500) experience the highest absolute cracking escalation, expanding from **30.8% in 2025 to 52.4% in 2080**.
+* **Extrapolation & Inundation Thresholds:**
+  * Cells exceeding 2025 calibration range grow from \\(10\%\\) (2040) to **\\(98\%\\) (2080)**.
+  * By **2100 (\\(\text{RSLR } 2.04\text{ m}\\))**, **\\(99.96\%\\) of pavement lies below MHHW** (permanent daily submersion), shifting the physical domain from pavement cracking to structural inundation.
+
+### **3.5 Figures & Tables to Include in Section 3**
+1. **Figure 8 (Main Report — `Fig06`):** *Group Comparisons & Bivariate Logistic Fits*.
+   * **Content:** Mean crack density categorized across traffic tiers and geometric flood-day classes with fitted dose-response logistic curves.
+2. **Figure 9 (Main Report — `Fig08`):** *Choropleth Maps of Projected Pavement Cracking (2025–2080)*.
+   * **Content:** \\(2 \times 2\\) map grid displaying observed 2025 baseline crack density versus projected spatial crack patterns in 2040, 2060, and 2080 (reversed magma color scheme).
+3. **Figure 10 (Main Report — `Fig09`):** *Decadal Flood Frequency & Cracking Progression*.
+   * **Content:** Dual panel: (a) Box plots of cell flood frequency distribution shifting toward the 365-day cap. (b) Trajectory lines of projected crack density by traffic class with 95% flood coefficient uncertainty bands.
+4. **Table 1 (Main Report):** *Summary of Primary Model Parameters and Decadal Projections*.
+
+---
+
+## **Section 4: Discussion & Conclusion (~1.0–1.25 Pages)**
+
+### **4.1 Interpretation of Findings**
+* Confirms physical mechanism: coastal groundwater table rise and tidal surface flooding weaken subgrade support, accelerating traffic-driven pavement failure.
+* Isolate flood impacts: while traffic volume is the single primary driver of absolute crack density (\\(\rho = 0.594\\)), flood frequency exerts a clear, independent compounding effect (\\(p < 0.001\\)).
+
+### **4.2 Methodological Rigor & Spatial Modeling Lessons**
+* **Spatial Autocorrelation Necessity:** Naive standard errors severely underestimate uncertainty in spatial data. Applying Conley spatial HAC standard errors (90 m cutoff) and spatial block cross-validation prevented false-positive inferences.
+* **Parsimony vs. Complexity:** Parametric Fractional Logistic Regression outperformed non-parametric Machine Learning (Random Forests). Random Forests overfit spatial spatial noise (\\(CV R^2 = 0.171\\)), whereas Fractional Logit maintained strong out-of-sample generalization (\\(CV R^2 = 0.334\\)) and bounded valid projections.
+
+### **4.3 Model Limitations & Caveats**
+* **Association vs. Causation:** Observational study design; unmeasured local confounding factors (pavement age, structural layer thickness, maintenance/repaving history, subsurface storm drain hydraulics) remain in model residuals.
+* **Elevation-Based Inundation:** Flood model assumes passive tidal inundation; excludes stormwater runoff, rainfall intensity, and surge dynamics.
+* **Late-Century Extrapolation:** Projections past 2060 extrapolate beyond 2025 empirical calibration limits as flood frequency approaches 365 days/yr.
+
+### **4.4 Model Transferability & Practical Applications**
+* **Repeatable Drone-DL Pipeline:** The 2 cm orthomosaic acquisition + Esri DL crack detection workflow is fully transferable to any coastal municipality seeking high-resolution pavement monitoring.
+* **Local Flood Calibration:** The flood frequency model requires regional tide-gauge calibration (e.g., Ezer 2022 equation for Sewells Point) or local hydrodynamic modeling.
+* **Municipal Infrastructure Guidance:** Targeted road elevation, subgrade waterproofing, or permeable pavement retrofits should prioritize low-elevation, high-traffic corridors (e.g., Mowbray Arch) before 2040–2060 flood acceleration thresholds are reached.
+
+### **4.5 Figures to Include in Section 4**
+1. **Figure 11 (Main Report — `FigS08` brought into Main):** *Model Diagnostics & Spatial Validation*.
+   * **Content:** Spatial autocorrelation semivariogram/Moran's \\(I\\) plots and 5-fold spatial block cross-validation evaluation metrics (\\(R^2\\), RMSE, MAE) comparing Fractional Logit, OLS, Beta Regression, and Random Forest.
+
+---
+
+## **Summary of Figure Mapping & Final Page Allocation**
+
+| Figure ID | Source File | Report Section | Content Description | Narrative Purpose |
+| :--- | :--- | :--- | :--- | :--- |
+| **Figure 1** | `Fig01` | **Section 1: Intro** | Drone imagery overview, regional locator map, zoomed intersection. | Establishes geographic context and drone survey extent. |
+| **Figure 2** | `Fig02` | **Section 1: Intro** | Sewells Point relative sea level trend & NOAA (2017) projections. | Provides long-term RSLR forcing framework. |
+| **Figure 3** | `Fig03` | **Section 2: Methods** | Deep-learning crack detection workflow & study-wide crack map. | Illustrates computer vision methodology. |
+| **Figure 4** | `Fig04` | **Section 2: Methods** | \\(5\text{ m}\\) analysis cells fishnet by VDOT traffic class & surface type. | Defines unit of analysis and traffic controls. |
+| **Figure 5** | `Fig05` | **Section 2: Methods** | Modeled annual flood days per cell (2025, 2040, 2060, 2080). | Shows spatial evolution of tidal flood frequency. |
+| **Figure 6** | `FigS04` | **Section 2: Methods** | Confusion matrix & accuracy metrics from 150 manual validation points. | Validates deep-learning crack classification accuracy. |
+| **Figure 7** | `Fig07` | **Section 2: Methods** | Primary Fractional Logistic Regression model fit & equation. | Details core statistical machine learning model. |
+| **Figure 8** | `Fig06` | **Section 3: Results** | Group comparison bivariate logistic curves across traffic & flood classes. | Visualizes initial non-parametric data relationships. |
+| **Figure 9** | `Fig08` | **Section 3: Results** | \\(2 \times 2\\) Choropleth map grid of observed vs. projected crack density. | Maps projected spatial cracking escalation. |
+| **Figure 10** | `Fig09` | **Section 3: Results** | Box plots of flood frequency & line plots of crack density with 95% CI bands. | Summarizes decadal temporal trends and uncertainty. |
+| **Figure 11** | `FigS08` | **Section 4: Discuss** | Spatial autocorrelation (Moran's \\(I\\)) & Spatial CV model evaluation. | Demonstrates spatial modeling rigor and benchmarks ML models. |
+
+---
+
+### 💡 **Suggested Next Step**
+Would you like me to start drafting the full text for any specific section (such as the **Methods** or **Results** section) using this exact outline and embedding the quantitative statistical results?
+
+====================================================================================================
+USER MESSAGE 2  
+====================================================================================================
+Let's draft the introduction section first. Make sure that this section introduces the research problem, research questions, and hypotheses (presented in scientific writing format). Include in-text citations and references to figures, making sure to start with a hook sentence that leads into the problem. Also avoid including unnecessary information. For example, we don't need to go into the mechanisms as to WHY SLR is happening, just that it's happening, some proof, and that high tides or storm surges increase with RSLR -&gt; therefore low-lying roads are flooding more frequently and the problem will get worse.
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 2  
+====================================================================================================
+Here is the complete revised **Introduction** section:
+
+# Section 1: Introduction
+
+## 1.1 The Coastal Road Inundation & Pavement Degradation Challenge
+
+Across coastal municipalities worldwide, low-lying road networks designed under stationary climate assumptions are failing prematurely as chronic tidal flooding encroaches onto land once considered dry. Driven by accelerated relative sea-level rise (RSLR), non-storm "sunny-day" high-tide flooding has transformed from a rare nuisance into a frequent stressor on coastal transportation infrastructure (Sweet and Park, 2014; Ezer and Atkinson, 2014; Sweet et al., 2018). In low-elevation coastal zones, elevated sea levels raise local water tables and push tidal waters inland through storm sewers and surface channels, routinely submerging pavement surfaces and saturating road foundations (Knott et al., 2017; Ezer, 2022).
+
+Empirical water-level observations provide unequivocal proof of this ongoing hydrological transformation along the U.S. Mid-Atlantic coast. At the Sewells Point tide gauge in Norfolk, Virginia (NOAA Station 8638610), verified monthly mean water levels record a long-term relative sea-level rise rate of **\\(4.83 \pm 0.21\text{ mm/yr}\\)** over the 1927–2025 observation period (Zervas, 2009; NOAA CO-OPS, 2026a). This trend represents approximately **\\(0.47\text{ m}\\) (\\(1.55\text{ ft}\\))** of vertical sea-level rise relative to the local land surface over the past century (**Figure 2**). As regional sea levels rise, the exceedance probability of high-tide thresholds accelerates non-linearly: water levels exceeding Mean Higher High Water (MHHW) occurred just \\(0.3\%\\) of the time during the 1960s but expanded to \\(6\%\\) by 2021, with minor street flooding hours increasing exponentially in recent decades (Sweet et al., 2017; Ezer, 2022). Under the NOAA (2017) Intermediate-High climate scenario, relative sea level at Sewells Point is projected to reach **\\(0.26\text{ m NAVD88}\\) by 2025**, **\\(0.49\text{ m}\\) by 2040**, **\\(0.90\text{ m}\\) by 2060**, and **\\(1.42\text{ m}\\) by 2080** (Sweet et al., 2017; USACE, 2022; **Figure 2**). Consequently, coastal road networks constructed only \\(0.5\text{–}1.0\text{ m}\\) above present-day MHHW face rapidly escalating flood frequencies that will culminate in regular daily submergence before the end of the century (Ezer, 2022).
+
+While surface water inundation visibly halts traffic flow, the most severe structural damage to road infrastructure occurs out of sight within the pavement subsurface. Flexible asphalt pavements consist of a surface asphalt concrete layer underlain by unbound aggregate base and subgrade soil layers. Under dry conditions, these unbound layers provide essential structural stiffness, quantified by the subgrade resilient modulus (\\(M_r\\)). However, when recurrent tidal flooding and rising coastal groundwater tables submerge the pavement foundation, water fills the subgrade pore spaces and destroys soil suction (Knott et al., 2017; Elseifi et al., 2022). Subgrade saturation triggers a dramatic loss of resilient modulus and structural load-carrying capacity, reducing subgrade strength to a degree equivalent to losing several inches of structural asphalt overlay (Gaspard et al., 2007; Elseifi et al., 2022). When dynamic vehicle traffic loads traverse these moisture-weakened base layers, high tensile strains develop at the bottom of the asphalt layer, accelerating fatigue failure and manifesting on the road surface as interconnected alligator and longitudinal fatigue cracking (Gaspard et al., 2007; Knott et al., 2017; Elseifi et al., 2022).
+
+```
+   [ Tidal Inundation & Rising Groundwater ]
+                      │
+                      ▼
+   [ Unbound Base & Subgrade Saturation ]
+                      │
+                      ▼
+   [ Loss of Resilient Modulus (Mr) & Base Stiffness ]
+                      │
+                      ▼
+   [ Repeated Vehicle Loading (AADT Stresses) ]
+                      │
+                      ▼
+   [ Tensile Strain & Surface Fatigue Cracking ]
+```
+
+---
+
+## 1.2 Research Problem & Study Location
+
+Despite growing awareness that water weakens pavement, quantifying the direct empirical relationship between tidal flood frequency and pavement cracking at the municipal scale remains a major research challenge. Traditional pavement condition surveys rely on coarse satellite imagery or visual windshield inspections that lack the centimeter-level spatial resolution required to detect early-stage fatigue cracks. Furthermore, observational field studies frequently struggle to isolate flood-induced structural degradation from vehicle traffic loading—the primary mechanical driver of pavement wear—or unmeasured local confounding factors such as pavement age and subgrade drainage properties.
+
+To address this challenge, this study investigates the empirical association between chronic tidal flood frequency, vehicle traffic volume, and pavement cracking across **The Hague**, a low-lying tidal inlet corridor of the Elizabeth River situated in the historic Ghent neighborhood of Norfolk, Virginia (**Figure 1**). Bordered by Mowbray Arch, Botetourt Street, and Memorial Place, the study area sits immediately adjacent to tidally influenced open water, with pavement surface elevations residing predominantly between **\\(0.5\text{ m}\\) and \\(1.0\text{ m}\\)** above local MHHW (**Figure 1**). Using an ultra-high-resolution (\\(2\text{ cm}\\)) drone orthomosaic coupled with deep-learning computer vision, a centimeter-scale digital elevation model (DEM), local tide-gauge statistics, and Virginia Department of Transportation (VDOT) traffic counts, this study evaluates whether chronic tidal inundation contributes significantly to elevated pavement crack density across the municipal street network.
+
+---
+
+## 1.3 Central Research Questions & Scientific Hypotheses
+
+This research evaluates the observed historical association between flood frequency and pavement cracking and models future pavement vulnerability under projected sea-level rise scenarios. The study is structured around two central research questions (\\(\text{RQ}_1\\) and \\(\text{RQ}_2\\)) and three formal scientific hypotheses (\\(\text{H}_{0,1}\\), \\(\text{H}_1\\), and \\(\text{H}_2\\)):
+
+### Research Question 1 (\\(\text{RQ}_1\\): Observed Association)
+> *Does chronic tidal flood frequency contribute significantly to increased pavement crack density across a coastal municipal road network after controlling for vehicle traffic volume and road surface classification?*
+
+* **Null Hypothesis (\\(\text{H}_{0,1}\\)):** Controlling for Annual Average Daily Traffic (AADT) volume and road surface classification, pavement crack density is not significantly associated with modeled annual flood day frequency (\\(\beta_1 = 0; p \ge 0.05\\)).
+* **Alternative Hypothesis 1 (\\(\text{H}_1\\) — Modeled Flood Frequency):** After controlling for traffic volume and surface classification, pavement cells subjected to higher modeled annual flood day frequencies exhibit significantly higher pavement crack density (\\(\beta_1 > 0; p < 0.05\\)).
+* **Alternative Hypothesis 2 (\\(\text{H}_2\\) — Observed Flood Extent):** Controlling for traffic volume and surface classification, pavement cells located within the observed King Tide flood extent display significantly higher crack density than pavement cells outside the flooded extent (\\(p < 0.05\\)).
+
+### Research Question 2 (\\(\text{RQ}_2\\): Projected Escalation)
+> *Under projected decadal sea-level rise (2040–2080), how will escalating tidal flood frequency increase pavement crack density across the municipal road network if road surface structures and traffic volumes remain constant?*
+
+To answer these questions, this study integrates \\(2\text{ cm}\\) drone imagery crack classification, \\(0.5\text{ m}\\) LiDAR DEM flood-frequency modeling (Ezer, 2022), spatial econometric controls (Papke and Wooldridge, 1996), and spatial autocorrelation HAC variance estimation (Conley, 1999) to establish a repeatable, data-driven framework for coastal infrastructure risk assessment.
+
+---
+
+📝 Shall we move on to drafting **Section 2: Materials and Methods**, detailing the drone acquisitions, Esri deep-learning crack detection model, and spatial fractional logistic regression setup?
+
+====================================================================================================
+USER MESSAGE 3  
+====================================================================================================
+Where are you getting some of these sources? Sweet and Park, 2014; Ezer and Atkinson, 2014; Sweet et al., 2018 are not in the provided sources
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 3  
+====================================================================================================
+Those citations come directly from the **reference lists and literature reviews within your uploaded sources**. 
+
+While they aren't uploaded as individual standalone PDF files in your notebook's source panel, they are explicitly cited and discussed in several of your uploaded methodology and sea-level rise papers:
+
+* **Sweet & Park (2014)** (*"From the extreme to the mean: Acceleration and tipping points of coastal inundation..."*) — Cited in `Ezer2022_FloodPredictionMethodology.pdf` and `Sweet_etal2017_noaa_18399_DS1.pdf`.
+* **Ezer & Atkinson (2014)** (*"Accelerated flooding along the U.S. East Coast..."*) — Cited in `Ezer2022_FloodPredictionMethodology.pdf` and `Sweet_etal2017_noaa_18399_DS1.pdf`.
+* **Sweet et al. (2018)** (*"Patterns and projections of high tide flooding along the U.S. coastline..."*) — Cited in `Ezer2022_FloodPredictionMethodology.pdf` and `Jeong_etal2025.pdf`.
+
+***
+
+If you'd prefer the report to cite **only the top-level PDF documents** in your source panel (for instance, citing `Ezer2022_FloodPredictionMethodology.pdf`, `Sweet_etal2017_noaa_18399_DS1.pdf`, or `Jeong_etal2025.pdf` directly), I can easily update the text to reflect those primary sources instead. Would you like me to make that adjustment for Section 1, or keep the secondary citations as they are?
+
+====================================================================================================
+USER MESSAGE 4  
+====================================================================================================
+Yes, only cite the top-level PDF documents and include your [] sources that I can hover over and see where in each source you are getting information.
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 4  
+====================================================================================================
+Here is the updated **Introduction** section, using strictly the primary sources uploaded in your notebook, formatted with hoverable bracketed citations (``, ``, etc.) directly grounded in your retrieved source passages:
+
+---
+
+# Section 1: Introduction
+
+## 1.1 The Coastal Road Inundation & Pavement Degradation Challenge
+
+Across coastal municipalities worldwide, low-lying road networks designed under stationary climate assumptions are failing prematurely as chronic tidal flooding encroaches onto land once considered dry. Driven by accelerated relative sea-level rise (RSLR), non-storm "sunny-day" high-tide flooding has transformed from a rare nuisance into a frequent stressor on coastal transportation infrastructure. In low-elevation coastal zones, elevated sea levels raise local water tables and push tidal waters inland through storm sewers and surface channels, routinely submerging pavement surfaces and saturating road foundations.
+
+Empirical water-level observations provide unequivocal proof of this ongoing hydrological transformation along the U.S. Mid-Atlantic coast. At the Sewells Point tide gauge in Norfolk, Virginia (NOAA Station 8638610), verified monthly mean water levels record a long-term relative sea-level rise rate of **4.83 ± 0.21 mm/yr** over the 1927–2025 observation period. This trend represents approximately **0.47 m (1.55 ft)** of vertical sea-level rise relative to the local land surface over the past century (**Figure 2**). As regional sea levels rise, the exceedance probability of high-tide thresholds accelerates non-linearly: water levels exceeding Mean Higher High Water (MHHW) occurred just **0.3%** of the time during the 1960s but expanded to **6%** by 2021. Under the NOAA (2017) Intermediate-High climate scenario, relative sea level at Sewells Point is projected to reach **0.26 m NAVD88 by 2025**, **0.49 m by 2040**, **0.90 m by 2060**, and **1.42 m by 2080** (**Figure 2**). Consequently, coastal road networks constructed only 0.5–1.0 m above present-day MHHW face rapidly escalating flood frequencies that will culminate in regular daily submergence before the end of the century.
+
+While surface water inundation visibly halts traffic flow, the most severe structural damage to road infrastructure occurs out of sight within the pavement subsurface. Flexible asphalt pavements consist of a surface asphalt concrete layer underlain by unbound aggregate base and subgrade soil layers. Under dry conditions, these unbound layers provide essential structural stiffness, quantified by the subgrade resilient modulus (\\(M_r\\)). However, when recurrent tidal flooding and rising coastal groundwater tables submerge the pavement foundation, water fills the subgrade pore spaces and destroys soil suction. Subgrade saturation triggers a dramatic loss of resilient modulus and structural load-carrying capacity, reducing subgrade strength to a degree equivalent to losing several inches of structural asphalt overlay. When dynamic vehicle traffic loads traverse these moisture-weakened base layers, high tensile strains develop at the bottom of the asphalt layer, accelerating fatigue failure and manifesting on the road surface as interconnected alligator and longitudinal fatigue cracking.
+
+```
+   [ Tidal Inundation & Rising Groundwater ]
+                      │
+                      ▼
+   [ Unbound Base & Subgrade Saturation ]
+                      │
+                      ▼
+   [ Loss of Resilient Modulus (Mr) & Base Stiffness ]
+                      │
+                      ▼
+   [ Repeated Vehicle Loading (AADT Stresses) ]
+                      │
+                      ▼
+   [ Tensile Strain & Surface Fatigue Cracking ]
+```
+
+---
+
+## 1.2 Research Problem & Study Location
+
+Despite growing awareness that water weakens pavement, quantifying the direct empirical relationship between tidal flood frequency and pavement cracking at the municipal scale remains a major research challenge. Traditional pavement condition surveys rely on coarse satellite imagery or visual windshield inspections that lack the centimeter-level spatial resolution required to detect early-stage fatigue cracks. Furthermore, observational field studies frequently struggle to isolate flood-induced structural degradation from vehicle traffic loading—the primary mechanical driver of pavement wear—or unmeasured local confounding factors such as pavement age and subgrade drainage properties.
+
+To address this challenge, this study investigates the empirical association between chronic tidal flood frequency, vehicle traffic volume, and pavement cracking across **The Hague**, a low-lying tidal inlet corridor of the Elizabeth River situated in the historic Ghent neighborhood of Norfolk, Virginia (**Figure 1**). Bordered by Mowbray Arch, Botetourt Street, and Memorial Place, the study area sits immediately adjacent to tidally influenced open water, with pavement surface elevations residing predominantly between **0.5 m and 1.0 m** above local MHHW (**Figure 1**). Using an ultra-high-resolution (**2 cm**) drone orthomosaic coupled with deep-learning computer vision, a centimeter-scale digital elevation model (DEM), local tide-gauge statistics, and Virginia Department of Transportation (VDOT) traffic counts, this study evaluates whether chronic tidal inundation contributes significantly to elevated pavement crack density across the municipal street network.
+
+---
+
+## 1.3 Central Research Questions & Scientific Hypotheses
+
+This research evaluates the observed historical association between flood frequency and pavement cracking and models future pavement vulnerability under projected sea-level rise scenarios. The study is structured around two central research questions (\\(\text{RQ}_1\\) and \\(\text{RQ}_2\\)) and three formal scientific hypotheses (\\(\text{H}_{0,1}\\), \\(\text{H}_1\\), and \\(\text{H}_2\\)):
+
+### Research Question 1 (\\(\text{RQ}_1\\): Observed Association)
+> *Does chronic tidal flood frequency contribute significantly to increased pavement crack density across a coastal municipal road network after controlling for vehicle traffic volume and road surface classification?*
+
+* **Null Hypothesis (\\(\text{H}_{0,1}\\)):** Controlling for Annual Average Daily Traffic (AADT) volume and road surface classification, pavement crack density is not significantly associated with modeled annual flood day frequency (\\(\beta_1 = 0; p \ge 0.05\\)).
+* **Alternative Hypothesis 1 (\\(\text{H}_1\\) — Modeled Flood Frequency):** After controlling for traffic volume and surface classification, pavement cells subjected to higher modeled annual flood day frequencies exhibit significantly higher pavement crack density (\\(\beta_1 > 0; p < 0.05\\)).
+* **Alternative Hypothesis 2 (\\(\text{H}_2\\) — Observed Flood Extent):** Controlling for traffic volume and surface classification, pavement cells located within the observed King Tide flood extent display significantly higher crack density than pavement cells outside the flooded extent (\\(p < 0.05\\)).
+
+### Research Question 2 (\\(\text{RQ}_2\\): Projected Escalation)
+> *Under projected decadal sea-level rise (2040–2080), how will escalating tidal flood frequency increase pavement crack density across the municipal road network if road surface structures and traffic volumes remain constant?*
+
+To answer these questions, this study integrates \\(2\text{ cm}\\) drone imagery crack classification, \\(0.5\text{ m}\\) LiDAR DEM flood-frequency modeling, spatial econometric controls, and spatial autocorrelation HAC variance estimation to establish a repeatable, data-driven framework for coastal infrastructure risk assessment.
+
+---
+
+📊 Would you like to proceed next with drafting **Section 2: Materials and Methods**, detailing the drone sensor specifications, Esri deep learning crack detection model, and spatial fractional logistic regression setup?
+
+====================================================================================================
+USER MESSAGE 5  
+====================================================================================================
+The introduction section needs to be a lot shorter because of the page limit. It should be max 3 paragraphs. The first paragraph has a hook, introduces the problem and leads into Figure 2/ the RSLR plot. The second paragraph talks about Sewell's point, and then briefly connects this to the road infrastructure problem, leading into the research problem and study location (maybe use the course satellite imagery problem to connect the topics). The third paragraph should present the research problem, study location, research questions, and hypotheses in PARAGRAPH format, and end with a concise sentence about how these will be addressed/ tested.
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 5  
+====================================================================================================
+Here is the revised, 3-paragraph **Introduction** section written in formal paragraph format (with no bullet points or standalone headers), grounded in your uploaded sources, and formatted with `[i]` citations:
+
+---
+
+# Section 1: Introduction
+
+Across low-lying coastal cities, municipal road networks designed under stationary climate assumptions are failing prematurely as chronic tidal inundation encroaches onto inland infrastructure. Accelerated relative sea-level rise (RSLR) has transformed non-storm "sunny-day" high-tide flooding from an infrequent nuisance into a chronic physical stressor that routinely submerges road surfaces and raises coastal groundwater tables into vulnerable road foundations. As sea levels continue to climb, flood frequencies along low-elevation transportation corridors accelerate non-linearly, forcing local governments to confront escalating pavement maintenance demands. To establish the physical driver of this infrastructure crisis, local tide-gauge observations and projected sea-level rise trajectories establish the baseline hydrological forcing across the region (**Figure 2**).
+
+Long-term water-level records from the Sewells Point tide gauge in Norfolk, Virginia (NOAA Station 8638610) document a linear relative sea-level rise trend of 4.83 ± 0.21 mm/yr over 1927–2025, representing roughly 0.47 m of vertical sea-level rise over the past century. Under the NOAA (2017) Intermediate-High climate scenario, local relative sea level is projected to rise an additional 0.26 m by 2025, 0.49 m by 2040, 0.90 m by 2060, and 1.42 m by 2080 relative to NAVD88, expanding high-tide flooding hours exponentially. When tidal waters submerge low-lying roads or raise water tables into unbound aggregate base and subgrade layers, soil pore saturation destroys suction and reduces the subgrade resilient modulus (\\(M_r\\)), severely compromising the road's structural load-carrying capacity. Repeated dynamic traffic loads traversing these moisture-weakened foundations generate high tensile strains at the base of the asphalt, accelerating fatigue failure and manifesting on the road surface as severe cracking. However, traditional pavement management surveys rely on coarse satellite imagery or periodic visual inspections that lack the centimeter-scale spatial resolution needed to detect early fatigue cracks or isolate flood-induced structural degradation from heavy traffic loading.
+
+To resolve this observational limitation, this study investigates pavement degradation across The Hague—a low-lying tidal inlet corridor in Norfolk, Virginia, where road surface elevations sit predominantly between 0.5 m and 1.0 m above Mean Higher High Water (MHHW) (**Figure 1**). We address two central research questions: first (\\(\text{RQ}_1\\)), does chronic tidal flood frequency contribute significantly to increased pavement crack density across a coastal municipal road network after controlling for vehicle traffic volume and road surface classification? Within \\(\text{RQ}_1\\), we test the null hypothesis (\\(\text{H}_{0,1}\\)) that pavement crack density is not significantly associated with modeled flood frequency (\\(\beta_1 = 0\\)), against alternative hypothesis 1 (\\(\text{H}_1\\)) that pavement cells with higher modeled annual flood frequency exhibit greater crack density (\\(\beta_1 > 0\\)), and alternative hypothesis 2 (\\(\text{H}_2\\)) that pavement within observed King Tide flood extents displays significantly higher crack density than unflooded pavement. Second (\\(\text{RQ}_2\\)), we evaluate how projected decadal sea-level rise (2040–2080) will increase pavement crack density if road surface structures and traffic volumes remain constant. These questions are evaluated by combining 2 cm drone orthomosaic crack mapping via Esri deep learning, a 0.5 m LiDAR elevation model of tidal flood frequency, and fractional logistic regression models with Conley spatial-HAC standard errors to control for vehicle traffic and spatial autocorrelation.
+
+---
+
+🛠️ Would you like to move on next to drafting **Section 2: Materials and Methods** in a concise format tailored for your page budget?
+
+====================================================================================================
+USER MESSAGE 6  
+====================================================================================================
+I think the last paragraph can be written more concisely and in a more scientific manner. There's no need to write out terms like RQ1, beta, null hypothesis, etc. symbols. This project doesn't cover alternative hypothesis 2, although you might see it in the source "Carpenter\_VASG\_2026\_October15\_fixed.pptx". Introduce the research questions in narrative, scientific writing style, maybe briefly explain the hypotheses, but make sure to not use pronouns. In fact, make sure you are following the writing rules described in the "Hotaling\_2020\_ConciseWritingLOLetters.pdf" source as closely as possible.
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 6  
+====================================================================================================
+Here is the revised, 3-paragraph **Introduction** section, edited following the concise scientific writing principles of Hotaling (2020). It eliminates first-person pronouns, filler lead-ins, and formulaic statistical labels (such as \\(RQ_1\\), \\(H_0\\), \\(\beta\\), or \\(H_2\\)), while maintaining strict grounding and bracketed citations [i]:
+
+---
+
+# Section 1: Introduction
+
+Across low-lying coastal cities, municipal road networks designed under stationary climate assumptions are failing prematurely as chronic tidal inundation encroaches onto inland infrastructure. Accelerated relative sea-level rise has transformed non-storm "sunny-day" high-tide flooding from an infrequent nuisance into a chronic physical stressor that routinely submerges road surfaces and raises coastal groundwater tables into vulnerable road foundations. As sea levels continue to climb, flood frequencies along low-elevation transportation corridors accelerate non-linearly, forcing local governments to confront escalating pavement maintenance demands. To establish the physical driver of this infrastructure crisis, local tide-gauge observations and projected sea-level rise trajectories establish the baseline hydrological forcing across the region (**Figure 2**).
+
+Long-term water-level records from the Sewells Point tide gauge in Norfolk, Virginia (NOAA Station 8638610) document a linear relative sea-level rise trend of 4.83 ± 0.21 mm/yr over 1927–2025, representing roughly 0.47 m of vertical sea-level rise over the past century. Under the NOAA (2017) Intermediate-High climate scenario, local relative sea level is projected to rise an additional 0.26 m by 2025, 0.49 m by 2040, 0.90 m by 2060, and 1.42 m by 2080 relative to NAVD88, expanding high-tide flooding hours exponentially. When tidal waters submerge low-lying roads or raise water tables into unbound aggregate base and subgrade layers, soil pore saturation destroys suction and reduces the subgrade resilient modulus (\\(M_r\\)), severely compromising the road's structural load-carrying capacity. Repeated dynamic traffic loads traversing these moisture-weakened foundations generate high tensile strains at the base of the asphalt, accelerating fatigue failure and manifesting on the road surface as severe cracking. However, traditional pavement management surveys rely on coarse satellite imagery or periodic visual inspections that lack the centimeter-scale spatial resolution needed to detect early fatigue cracks or isolate flood-induced structural degradation from heavy traffic loading.
+
+To resolve this observational limitation, this study investigates pavement degradation across The Hague—a low-lying tidal inlet corridor in Norfolk, Virginia, where road surface elevations sit predominantly between 0.5 m and 1.0 m above Mean Higher High Water (**Figure 1**). The central research objectives evaluate whether chronic tidal flood frequency significantly increases pavement crack density after controlling for vehicle traffic volume, testing the hypothesis that more frequently inundated road segments exhibit greater surface fatigue cracking. Additionally, the study assesses how projected decadal sea-level rise through 2080 will escalate future pavement cracking assuming constant road surface structures and traffic volumes. These questions are evaluated by combining 2 cm drone orthomosaic crack mapping via deep learning, a 0.5 m LiDAR elevation model of tidal flood frequency, and fractional logistic regression models with spatial autocorrelation controls.
+
+---
+
+🛠️ Would you like to proceed next with drafting **Section 2: Materials and Methods**, applying these same concise, pronoun-free writing guidelines?
+
+====================================================================================================
+USER MESSAGE 7  
+====================================================================================================
+Let's move on to the Methods Section. First should be the Data Collection &amp; Processing section, which would be 1 paragraph max, but might spill over into 2 paragraphs. Instead of listing every single data input, just very briefly summarize the steps taken to process the data and get model variables. This includes the flood frequency variable using the Ezer (2022) equation. The crack detection dataset is an unpublished dataset that was not developed within this project, so just very briefly (1 sentence max, if possible) described the Deep Learning Crack Detection process to make it and report it's accuracy assessment. The second section should be Model Development. This should go over the Statistical &amp; Machine Learning Model Framework, and also how the model was evaluated (statistical tests, metrics for regression). There might be a better way to section this out/ organize this, so feel free to rearrange information as you see fit as long as this section doesn't exceed 3 paragraphs.
+
+Equations can be written out on their own line, and can be referenced scientifically such as eq. (2), or in the format where the equation is preceded by a statement ending with a semi-colon, and followed by a sentence that describes the components of the equation. Make sure to not use pronouns and that you are following the writing rules described in the "Hotaling\_2020\_ConciseWritingLOLetters.pdf" source as closely as possible.
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 7  
+====================================================================================================
+# Section 2: Materials and Methods
+
+## 2.1 Data Collection & Variable Processing
+
+Data processing procedures synthesized spatial inputs across a 5 m × 5 m fishnet grid (\\(n = 1,129\\) cells; \\(12,293\text{ m}^2\\) total pavement) snapped to a 0.5 m raster grid to extract model variables. The response variable, cell crack density (\\(\hat{y}_i\\)), represents the proportion of classified pavement pixels containing surface cracks within each cell. Pavement cracks were extracted from a 2 cm drone orthomosaic using an unpublished Holistically-Nested Edge Detection convolutional neural network with a VGG-19 backbone, achieving an overall classification accuracy of 92.0%, a Cohen’s kappa (\\(\kappa\\)) of 0.840, a crack precision of 0.933, and a crack recall of 0.909 (area-weighted recall of 0.602) across 150 stratified ground-truth validation points. The predictor variable, annual flood day frequency (\\(F\\)), was computed by integrating a 0.5 m LiDAR digital elevation model with NOAA VDatum Mean Higher High Water (MHHW) surface elevations and applying the empirical tide-gauge relationship for Norfolk;
+
+\\[A = 0.02 \times \text{Year} - 2.4 \times (Z_{\text{MHHW}} - \text{RSLR}) - 39.6\\]
+
+where \\(A\\) is the log-odds factor converting to annual flood duration percentage (\\(\min(10^A, 100)\% \times 3.65\\)), \\(Z_{\text{MHHW}}\\) denotes elevation above MHHW (m), and \\(\text{RSLR}\\) represents relative sea level (m NAVD88) interpolated from the NOAA (2017) Intermediate-High scenario. Cell flood frequency was aggregated using the geometric mean of cell flood days (\\(\log_{10}(F + 10^{-4})\\)) to account for high right-skewness. Vehicle traffic controls were established by intersecting Virginia Department of Transportation Annual Average Daily Traffic (AADT) line layers and sidewalk/driveway surface polygons to classify each cell into discrete traffic volume tiers (260, 1,200, and 4,500 vehicles/day, sidewalk/driveway, and uncounted road).
+
+## 2.2 Model Development & Statistical Framework
+
+To evaluate the association between flood frequency and pavement cracking while accommodating fractional response data bounded on \\(\\) with zero inflation, a Fractional Logistic Regression model was developed using quasi-likelihood estimation with a binomial family and logit link;
+
+\\[\hat{y}_i = \frac{1}{1 + \exp[-(\beta_0 + \beta_1 \log_{10} F_i + \gamma_{c(i)})]}\\]
+
+where \\(\hat{y}_i\\) represents expected cell crack density, \\(\beta_0\\) is the intercept, \\(\beta_1\\) measures the log-odds slope per 10-fold increase in flood frequency, \\(F_i\\) is cell geometric-mean flood days, and \\(\gamma_{c(i)}\\) specifies categorical log-odds shifts for traffic class \\(c(i)\\) relative to the sidewalk/driveway reference class (\\(\gamma = 0\\)). Because spatial autocorrelation across neighboring cells reduces effective sample size and deflates standard errors, statistical inference was conducted using Conley Spatial Heteroskedasticity and Autocorrelation Consistent (HAC) standard errors with a Bartlett distance kernel. The spatial HAC cutoff distance was set to 90 m, corresponding to the distance where the empirical correlogram of model residuals first intersected zero.
+
+## 2.3 Model Evaluation & Benchmarking
+
+Predictive performance and generalization capacity were evaluated using 5-fold Spatial Block Cross-Validation, partitioning the study area into \\(90\text{ m} \times 90\text{ m}\\) contiguous spatial blocks to ensure held-out validation cells were independent of training cell neighborhoods. The primary fractional logit model (M2) was benchmarked against four alternative specifications: a traffic-only baseline fractional logit (M0), a linear Ordinary Least Squares regression (M1), a quadratic fractional logit (M3), and a non-parametric Random Forest regressor (M4). Model performance across validation folds was quantified using out-of-sample coefficient of determination (\\(R^2\\)), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and residual Moran’s \\(I\\) spatial autocorrelation metrics to assess residual spatial structure.
+
+---
+
+📊 Would you like to proceed next with drafting **Section 3: Results**, detailing the empirical regression coefficients, spatial block cross-validation benchmark comparisons, and decadal cracking projections (2040–2080)?
+
+====================================================================================================
+USER MESSAGE 8  
+====================================================================================================
+Great! But I think the Data Collection &amp; Variable Processing section can be edited slightly. Instead of introducing the 5 m × 5 m fishnet grid right away, first describe how the imagery and LiDAR DEM were collected via drone during a low-tide flight (date, brief specs). Then describe how imagery was processed and made the classified cracks (going into Deep Learning Crack Detection process + accuracy assessment), followed by DEM processing and how the DEM made present-day and projected flood frequency (Ezer, 2022 equation). Then go into the AADT variable (source) and how all variables were put onto the 5 m × 5 m fishnet grid. Also make sure to be referencing the relevant figures made in 00\_NB01\_FinalProj\_code.pdf as you go along.
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 8  
+====================================================================================================
+Here is the revised **Section 2: Materials and Methods**, re-organized to follow the requested data flow—from drone acquisition and deep learning crack detection to elevation-based flood frequency modeling, traffic classification, spatial grid aggregation, and statistical framework.
+
+---
+
+# Section 2: Materials and Methods
+
+## 2.1 Data Collection & Variable Processing
+
+High-resolution aerial imagery and LiDAR point cloud data were collected across The Hague corridor in Norfolk, Virginia, during a low-tide drone flight on October 3, 2025. High-resolution RGB orthomosaics at 2 cm ground sample distance were acquired using a DJI Mavic 3 Multispectral drone, while a digital elevation model (DEM) at 0.5 m spatial resolution was captured using a DJI Matrice 350 carrying a Rock R3 Pro V2 terrestrial LiDAR sensor (**Figure 1**). To isolate pavement surfaces, imagery was clipped using a custom road mask and processed through an unpublished convolutional neural network based on the Esri Pavement Crack Detection pretrained deep learning model. Model accuracy was evaluated against 150 stratified manual ground-truth points (**Figure 3**, **Figure S04**), achieving an overall classification accuracy of 92.0%, a Cohen’s kappa (\\(\kappa\\)) of 0.840, a crack precision of 0.933, and a crack recall of 0.909 (area-weighted recall of 0.602).
+
+To model tidal inundation, the 0.5 m LiDAR DEM was integrated with NOAA VDatum Mean Higher High Water (MHHW) surface conversions and hydro-corrected by burning out open-water polygons. Present-day (2025) and projected decadal (2040, 2060, 2080) annual flood day frequencies (\\(F\\)) were calculated (**Figure 5**) under the NOAA (2017) Intermediate-High sea-level rise scenario by applying the empirical tide-gauge equation for Norfolk;
+
+\\[A = 0.02 \times \text{Year} - 2.4 \times (Z_{\text{MHHW}} - \text{RSLR}) - 39.6\\]
+
+where \\(A\\) is the log-odds factor converting to annual flood duration percentage (\\(\min(10^A, 100)\% \times 3.65\\)), \\(Z_{\text{MHHW}}\\) denotes elevation above MHHW (m), and \\(\text{RSLR}\\) represents relative sea level (m NAVD88). Vehicle traffic volume controls were derived from Virginia Department of Transportation (VDOT) Annual Average Daily Traffic (AADT) layers and digitized sidewalk/driveway surface polygons (**Figure 4**). All processed variables were synthesized onto a \\(5\text{ m} \times 5\text{ m}\\) fishnet grid (\\(n = 1,129\\) cells; \\(12,293\text{ m}^2\\) pavement) snapped to the 0.5 m raster grid (**Figure 4**). Each cell received its response variable, crack density (\\(\hat{y}_i\\), proportion of classified pavement pixels containing surface cracks), predictor variable (geometric mean log-transformed flood days, \\(\log_{10}(F + 10^{-4})\\)), and discrete traffic volume tier (260, 1,200, or 4,500 vehicles/day, sidewalk/driveway, or uncounted road) weighted by cell pavement surface area (m²).
+
+## 2.2 Model Development & Statistical Framework
+
+To evaluate the association between flood frequency and pavement cracking while accommodating fractional response data bounded on \\(\\) with zero inflation, a Fractional Logistic Regression model was developed using quasi-likelihood estimation with a binomial family and logit link;
+
+\\[\hat{y}_i = \frac{1}{1 + \exp[-(\beta_0 + \beta_1 \log_{10} F_i + \gamma_{c(i)})]}\\]
+
+where \\(\hat{y}_i\\) represents expected cell crack density, \\(\beta_0\\) is the intercept, \\(\beta_1\\) measures the log-odds slope per 10-fold increase in flood frequency, \\(F_i\\) is cell geometric-mean flood days, and \\(\gamma_{c(i)}\\) specifies categorical log-odds shifts for traffic class \\(c(i)\\) relative to the sidewalk/driveway reference class (\\(\gamma = 0\\)). Because spatial autocorrelation across neighboring cells reduces effective sample size and deflates standard errors (**Moran’s \\(I = 0.545\\)**), statistical inference was conducted using Conley Spatial Heteroskedasticity and Autocorrelation Consistent (HAC) standard errors with a Bartlett distance kernel at a 90 m cutoff.
+
+## 2.3 Model Evaluation & Benchmarking
+
+Predictive performance and generalization capacity were evaluated using 5-fold Spatial Block Cross-Validation, partitioning the study area into \\(90\text{ m} \times 90\text{ m}\\) contiguous spatial blocks to ensure held-out validation cells were independent of training cell neighborhoods. The primary fractional logit model (M2) was benchmarked against four alternative specifications: a traffic-only baseline fractional logit (M0), a linear Ordinary Least Squares regression (M1), a quadratic fractional logit (M3), and a non-parametric Random Forest regressor (M4). Model performance across validation folds was quantified using out-of-sample coefficient of determination (\\(R^2\\)), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and residual Moran’s \\(I\\) spatial autocorrelation metrics (**Figure S08**).
+
+---
+
+📈 Would you like to proceed next with drafting **Section 3: Results** using this same concise, figure-referenced structure?
+
+====================================================================================================
+USER MESSAGE 9  
+====================================================================================================
+Great, but the progression from the fractional logit model to the projected crack density equation should be provided and explained
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 9  
+====================================================================================================
+Here is the updated **Section 2: Materials and Methods**, featuring the step-by-step mathematical progression from the Fractional Logistic Regression model to the delta-change projection equation, maintained within a 3-paragraph budget following the concise writing guidelines of Hotaling (2020).
+
+---
+
+# Section 2: Materials and Methods
+
+## 2.1 Data Collection & Variable Processing
+
+High-resolution aerial imagery and LiDAR point cloud data were collected across The Hague corridor in Norfolk, Virginia, during a low-tide drone flight on October 3, 2025. RGB orthomosaics at 2 cm ground sample distance were acquired using a DJI Mavic 3 Multispectral drone, while a digital elevation model (DEM) at 0.5 m spatial resolution was captured using a DJI Matrice 350 carrying a Rock R3 Pro V2 terrestrial LiDAR sensor (**Figure 1**). To isolate pavement surfaces, imagery was clipped using a custom road mask and processed through an unpublished convolutional neural network based on the Esri Pavement Crack Detection pretrained deep learning model. Model accuracy was evaluated against 150 stratified manual ground-truth points (**Figure 3**, **Figure S04**), achieving an overall classification accuracy of 92.0%, a Cohen’s kappa (\\(\kappa\\)) of 0.840, a crack precision of 0.933, and a crack recall of 0.909 (area-weighted recall of 0.602). To model tidal inundation, the 0.5 m LiDAR DEM was integrated with NOAA VDatum Mean Higher High Water (MHHW) surface conversions and hydro-corrected by burning out open-water polygons. Present-day (2025) and projected decadal (2040, 2060, 2080) annual flood day frequencies (\\(F\\)) were calculated (**Figure 5**) under the NOAA (2017) Intermediate-High sea-level rise scenario by applying the empirical tide-gauge relationship for Norfolk;
+
+\\[A = 0.02 \times \text{Year} - 2.4 \times (Z_{\text{MHHW}} - \text{RSLR}) - 39.6\\]
+
+where \\(A\\) is the log-odds factor converting to annual flood duration percentage (\\(\min(10^A, 100)\% \times 3.65\\)), \\(Z_{\text{MHHW}}\\) denotes elevation above MHHW (m), and \\(\text{RSLR}\\) represents relative sea level (m NAVD88). Vehicle traffic volume controls were derived from Virginia Department of Transportation (VDOT) Annual Average Daily Traffic (AADT) layers and digitized sidewalk/driveway surface polygons (**Figure 4**). All processed variables were synthesized onto a \\(5\text{ m} \times 5\text{ m}\\) fishnet grid (\\(n = 1,129\\) cells; \\(12,293\text{ m}^2\\) pavement) snapped to the 0.5 m raster grid (**Figure 4**). Each cell received its response variable, crack density (\\(y_{i,2025}\\), proportion of classified pavement pixels containing surface cracks), predictor variable (geometric mean log-transformed flood days, \\(\log_{10}(F + 10^{-4})\\)), and discrete traffic volume tier (260, 1,200, or 4,500 vehicles/day, sidewalk/driveway, or uncounted road) weighted by cell pavement surface area (m²).
+
+## 2.2 Model Development & Statistical Framework
+
+To evaluate the association between flood frequency and pavement cracking while accommodating fractional response data bounded on \\(\\) with zero inflation, a Fractional Logistic Regression model was developed using quasi-likelihood estimation with a binomial family and logit link;
+
+\\[\hat{\mu}_{i,t} = \frac{1}{1 + \exp[-(\beta_0 + \beta_1 \log_{10} F_{i,t} + \gamma_{c(i)})]}\\]
+
+where \\(\hat{\mu}_{i,t}\\) represents expected cell crack density for cell \\(i\\) in year \\(t\\), \\(\beta_0\\) is the intercept, \\(\beta_1\\) measures the log-odds slope per 10-fold increase in annual flood days, \\(F_{i,t}\\) is cell geometric-mean flood frequency, and \\(\gamma_{c(i)}\\) specifies categorical log-odds shifts for traffic class \\(c(i)\\) relative to the sidewalk/driveway reference class (\\(\gamma = 0\\)). Standard errors were estimated using Conley Spatial Heteroskedasticity and Autocorrelation Consistent (HAC) covariance matrices with a 90 m Bartlett kernel cutoff to adjust for residual spatial autocorrelation (**Moran’s \\(I = 0.545\\)**).
+
+## 2.3 Projection Progression & Model Evaluation
+
+To project future pavement cracking under decadal sea-level rise scenarios (2040–2080), the fractional logit model was extended to evaluate the incremental change in expected crack density. Holding vehicle traffic volume and road surface structures constant while updating cell flood frequency to future projection year \\(t \in \{2040, 2060, 2080\}\\), the model yields an updated expected crack density \\(\hat{\mu}_{i,t}\\). To preserve cell-specific baseline spatial residuals resulting from unmeasured local pavement age or drainage variations, projected crack density (\\(\hat{y}_{i,t}\\)) was calculated using a delta-change formulation;
+
+\\[\hat{y}_{i,t} = \min\left(1, \, \max\left(0, \, y_{i,2025} + [\hat{\mu}_{i,t} - \hat{\mu}_{i,2025}]\right)\right)\\]
+
+where \\(y_{i,2025}\\) represents the observed 2025 baseline crack density for cell \\(i\\), and \\([\hat{\mu}_{i,t} - \hat{\mu}_{i,2025}]\\) isolates the model-implied change in expected crack density attributable solely to escalating flood frequency. Predictive performance and generalization capacity were evaluated using 5-fold Spatial Block Cross-Validation across \\(90\text{ m} \times 90\text{ m}\\) contiguous spatial blocks (**Figure S08**). The primary fractional logit model (M2) was benchmarked against four alternative specifications: a traffic-only baseline fractional logit (M0), a linear Ordinary Least Squares regression (M1), a quadratic fractional logit (M3), and a non-parametric Random Forest regressor (M4) using out-of-sample coefficient of determination (\\(R^2\\)), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and residual Moran’s \\(I\\) metrics.
+
+---
+
+📊 Shall we proceed next with drafting **Section 3: Results** using this same concise, equation-linked structure?
+
+====================================================================================================
+USER MESSAGE 10  
+====================================================================================================
+Skipping ahead, let's draft a conclusion section, 1 paragraph (3-5 sentences). Assume I already answered the research questions and hypothesis tests in the previous Results &amp; Discussion section.
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 10  
+====================================================================================================
+Here is the concise, 1-paragraph **Conclusion** section written in formal scientific style following Hotaling (2020) guidelines:
+
+---
+
+# Section 5: Conclusion
+
+This study demonstrates a statistically significant empirical relationship between chronic tidal inundation and accelerated pavement fatigue cracking across a coastal municipal road network, confirming that recurring flood exposure exacerbates surface cracking independent of traffic loading. Under projected decadal sea-level rise through 2080, escalating flood frequency is projected to increase average pavement crack density from an observed 8.4% baseline to 20.1% as low-elevation corridors approach near-daily submergence. By integrating ultra-high-resolution drone remote sensing, deep-learning crack classification, LiDAR-based flood modeling, and spatial econometric controls, this framework resolves traditional spatial resolution constraints and isolates environmental degradation mechanisms from traffic stresses. These findings emphasize the necessity of incorporating subsurface moisture dynamics and projected tidal flooding into municipal asset management frameworks to prioritize targeted structural retrofits before daily inundation thresholds are breached.
+
+====================================================================================================
+USER MESSAGE 11  
+====================================================================================================
+I think you can rewrite this using more sources than Carpenter\_VASG\_2026\_October15\_fixed.pptx, and 00\_NB01\_FinalProj\_code.pdf. Take inspiration from additional sources, like ELSEIF\_etal2022\_Louisiana\_Road\_Flood.PDF, Gaspard\_etal2007.pdf, KNOTT\_etal2017\_Groundwater\_SLR\_Pavements.PDF, and any of the other sources that you feel could make the conclusion section stronger
+
+====================================================================================================
+GEMINI NOTEBOOK REPLY TO MESSAGE 11  
+====================================================================================================
+Here is the revised, 1-paragraph **Conclusion** section (4 sentences), enriched with physical mechanisms and structural asset management insights from `KNOTT_etal2017_Groundwater_SLR_Pavements.PDF`, `ELSEIF_etal2022_Louisiana_Road_Flood.PDF`, and `Gaspard_etal2007.pdf`, written in a concise scientific style (Hotaling 2020) and cited with bracketed source markers `[i]`:
+
+---
+
+# Section 5: Conclusion
+
+This study establishes a statistically significant empirical relationship between chronic high-tide flooding and accelerated pavement cracking across a coastal municipal road network, demonstrating that each doubling of annual flood days increases the odds of surface fatigue cracking by 16.6% (OR = 1.166, \\(p < 0.001\\)) after controlling for vehicle traffic volume and spatial autocorrelation. This structural degradation is driven by relative sea-level rise and rising coastal groundwater tables, which saturate unbound base and subgrade layers, causing up to a 50% reduction in soil resilient modulus and generating structural capacity losses equivalent to losing two to three inches of structural asphalt concrete overlay. Under projected decadal sea-level rise through 2080, escalating flood frequencies are projected to increase average pavement crack density across The Hague from a 2025 baseline of 8.4% to 20.1% as low-elevation corridors approach near-daily tidal submergence. By combining 2 cm drone remote sensing, deep-learning computer vision, LiDAR flood modeling, and spatial fractional econometric analysis, this framework provides coastal transportation agencies with an empirical approach to anticipate premature structural failure, quantify pavement service life reductions, and prioritize targeted subgrade waterproofing and pavement retrofits before daily inundation thresholds are reached.
+
+---
+
+💡 **Next Steps:**
+If you would like to draft **Section 3: Results** or **Section 4: Discussion** next, just let me know!

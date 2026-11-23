@@ -1,0 +1,17 @@
+Dataset,Role,Access,Resolution,Date
+Drone imagery (Imagery_dry),Crack mapping; map background,ODU tiled image service (LERC tiles),0.02 m (preview 0.32 m),2025-10-03
+Drone DEM,Elevation (flood model),ODU tiled image service (LERC tiles),0.5 m,2025-10-03
+NOAA VDatum (MHHW in NAVD88),NAVD88 -> MHHW conversion,Esri Living Atlas tiled image service,~40 x 50 m,1983-2001 tidal epoch
+WaterSurface_Final,Open water removed from the DEM,custom file,vector,2023-2025
+Flood days per year (2025),Predictor: flood frequency,"derived (DEM, VDatum, water, Ezer 2022)",0.5 m,2025
+VGIN RCL + VDOT AADT,Traffic control (AADT),VGIN feature service (query),vector,2024 release
+Custom_AddRCL,Extra centerlines (no counts),custom file,vector,2025 imagery
+Custom_Sidewalk + Norfolk Driveways,Sidewalk/driveway surface,custom file + City of Norfolk feature service,vector,2025 imagery / 2006-2008
+Pavement mask (Road_Mask_Final_Shrunk3),Denominator of crack density,custom file,0.02 m,2025 imagery
+Crack raster (Cracks_Classified_Combined_Shrunk),Response: crack density,custom file,0.02 m,2025 imagery
+Crack-model training lines,Workflow figure only,custom file,vector,2026
+Accuracy points (labeled),Crack-map accuracy,custom file,150 points,labeled Oct 2026
+"NOAA monthly mean sea level, Sewells Point",Observed relative sea level (figure),NOAA CO-OPS Data API,"1 gauge, monthly",1927-2026
+"NOAA tidal datums, Sewells Point",MSL -> NAVD88 conversion (figure),NOAA CO-OPS Metadata API,1 gauge,1983-2001 tidal epoch
+NOAA 2017 Intermediate-High RSLR (USACE),Sea level in the flood model,"coded table (USACE, 2022)",decadal,2000-2100
+NOAA 2017 SLR scenarios (CO-OPS API),Sea-level figure,NOAA CO-OPS Derived Product API,decadal,2000-2100

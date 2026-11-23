@@ -1,0 +1,21 @@
+,value
+Cells (n),1129.0
+Flood coefficient β₁ (log-odds per 10× flood days),0.5099919736412992
+SE (spatial HAC),0.12186054365079796
+z,4.185045941553698
+p (spatial HAC),2.851084327833335e-05
+Odds ratio per doubling of flood days,1.165934465279165
+"Odds ratio per doubling, 95% CI low",1.0850465300562429
+"Odds ratio per doubling, 95% CI high",1.2528524258359213
+Average marginal effect per doubling (percentage points),1.2240978224453265
+AME 95% CI low (pp),0.512983479517325
+AME 95% CI high (pp),1.935212165373328
+Expected crack density at 1 flood day(s)/yr (same road types),0.07602909451185784
+Expected crack density at 10 flood day(s)/yr (same road types),0.1172963356145523
+"R2 (in-sample, scikit-learn)",0.398243210494747
+R2 (squared correlation of fitted and observed),0.4157385356530951
+"R2 gained by flood days (in-sample, M1 - M2)",0.05445985621001581
+"R2 gained by flood days (spatial CV, M1 - M2)",0.038347761356749444
+Spatial-HAC cutoff (m),90.0
+Moran's I of crack density,0.544648590353435
+Moran's I of the primary-model residuals (in-sample),0.3609591818398754

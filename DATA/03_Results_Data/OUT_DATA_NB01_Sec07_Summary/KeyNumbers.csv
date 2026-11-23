@@ -1,0 +1,18 @@
+,value
+"Analysis cells (5 m, with flood days)","1,129"
+Pavement area (m2),"12,293"
+"Mean crack density, 2025 (observed)",0.084
+Cells with no cracks (%),18.7
+Crack map: overall accuracy / Cohen's kappa,0.92 / 0.84
+Crack map: precision / recall / F1 (area-weighted),0.93 / 0.60 / 0.73
+"Median flood days/yr per cell, 2025",2.4
+Moran's I of crack density (k = 8),0.54
+Flood coefficient β₁ (log-odds per 10× flood days),"0.51 (SE 0.12, z = 4.2, p < 0.001, spatial HAC 90 m)"
+Odds ratio per doubling of flood days (95% CI),1.17 (1.09–1.25)
+Average marginal effect per doubling (pp),+1.2 (+0.5 to +1.9)
+Expected crack density at 1 vs 10 flood days/yr,0.076 vs 0.117
+Primary model R2: in-sample / spatial CV,0.398 / 0.334
+Primary model RMSE / MAE (spatial CV),0.103 / 0.072
+"Mean crack density 2040 (projected, band)",0.124 (0.104–0.146); +46.9 %
+"Mean crack density 2060 (projected, band)",0.182 (0.129–0.249); +116.1 %
+"Mean crack density 2080 (projected, band)",0.201 (0.135–0.290); +139.2 %
