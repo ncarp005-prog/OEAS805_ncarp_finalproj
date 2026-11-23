@@ -19,7 +19,7 @@ This project tests whether streets that flood more often at high tide are more c
    ```
    conda env create -f oes805_proj.yml
    conda activate oes805_proj
-   jupyter lab
+   jupyter notebook
    ```
 4. **Open `CODE/NB01_FinalProj_ReportDraft.ipynb`.** It produces all the analysis and figures of the final report.
 5. **Set the project folder.** In cell **00.2 (Step A)**, replace the placeholder with the location of the project folder on your computer:
