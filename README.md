@@ -1,4 +1,4 @@
-# From Rising Tides to Broken Streets: Linking Flood Frequency & Pavement Cracking Under Projected Sea-Level Rise in The Hague, Norfolk, VA**
+# From Rising Tides to Broken Streets: Linking Flood Frequency & Pavement Cracking Under Projected Sea-Level Rise in The Hague, Norfolk, VA
 
 **Nick Carpenter** 
 
